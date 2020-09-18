@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        ".vs": true,
+        "Library": true,
+        "obj": true,
+        "Temp": true,
+        "**/*.meta": true
+    }
+}
