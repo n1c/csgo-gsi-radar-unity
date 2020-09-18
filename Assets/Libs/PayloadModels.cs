@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Libs.PayloadModels
+namespace PayloadModels
 {
     [Serializable]
     public struct Payload
