@@ -22,6 +22,7 @@ namespace PayloadModels
     [Serializable]
     public struct Player
     {
+        public string steamid;
         public string name;
         public string team;
         public string position;

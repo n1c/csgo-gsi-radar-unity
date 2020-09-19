@@ -11,6 +11,7 @@ public class Drawer : MonoBehaviour
 
     private Listener _listener;
     private string _currentMap;
+    private Libs.MapDimensions _mapDimensions;
 
     private void Start()
     {
@@ -31,6 +32,7 @@ public class Drawer : MonoBehaviour
         {
             Debug.Log("New map! " + e.Payload.map.name);
             _currentMap = e.Payload.map.name;
+            _mapDimensions = new Libs.MapDimensions(_currentMap);
 
             Texture2D mapTexture = Resources.Load<Texture2D>("csgo-overviews/overviews/" + _currentMap);
             if (mapTexture == null)
@@ -43,7 +45,15 @@ public class Drawer : MonoBehaviour
             }
         }
 
-        DrawPlayer(e.Payload.player, true);
+        // DrawPlayer(e.Payload.player, true);
+        foreach (KeyValuePair<string, Player> kv in e.Payload.allplayers)
+        {
+            // Only draw the allplayers on the _same team_ as player.
+            if (kv.Value.team == e.Payload.player.team)
+            {
+                DrawPlayer(kv.Value, kv.Key == e.Payload.player.steamid);
+            }
+        }
     }
 
     private void DrawPlayer(Player p, bool isMain = false)
@@ -53,9 +63,8 @@ public class Drawer : MonoBehaviour
             return;
         }
 
-        Debug.Log($"DrawPlayer: {p.position} + {Helpers.s2v(p.position)}");
-
-        Vector3 playerPosition = Helpers.s2v(p.position);
+        Vector3 playerPosition = Helpers.String2Vector(p.position);
+        playerPosition = _mapDimensions.ScaleVector(playerPosition);
         Instantiate(_playerGameObject, playerPosition, Quaternion.identity);
 
         if (isMain)

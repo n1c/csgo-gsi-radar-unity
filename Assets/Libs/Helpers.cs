@@ -6,7 +6,7 @@ namespace Libs
 {
     public static class Helpers
     {
-        public static Vector3 s2v(string s)
+        public static Vector3 String2Vector(string s)
         {
             string[] parts = s.Split(',');
             if (parts.Length != 3)
