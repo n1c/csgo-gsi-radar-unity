@@ -31,6 +31,16 @@ public class Drawer : MonoBehaviour
         {
             Debug.Log("New map! " + e.Payload.map.name);
             _currentMap = e.Payload.map.name;
+
+            Texture2D mapTexture = Resources.Load<Texture2D>("csgo-overviews/overviews/" + _currentMap);
+            if (mapTexture == null)
+            {
+                Debug.Log("Failed to find Map texture for " + _currentMap);
+            }
+            else
+            {
+                _mapGameObject.GetComponent<MeshRenderer>().material.mainTexture = mapTexture;
+            }
         }
 
         DrawPlayer(e.Payload.player, true);

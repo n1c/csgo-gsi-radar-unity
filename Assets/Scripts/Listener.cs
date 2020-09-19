@@ -36,6 +36,7 @@ public class Listener : MonoBehaviour
         _listener.Prefixes.Add("http://*:8888/");
         _listener.Start();
         _listener.BeginGetContext(new AsyncCallback(ContextCallback), null);
+        // HttpListenerContext context = await _listener.GetContextAsync();
 
         Debug.Log("HTTP Listening...");
     }
