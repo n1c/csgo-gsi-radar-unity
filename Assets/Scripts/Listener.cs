@@ -13,13 +13,18 @@ public class Listener : MonoBehaviour
     [SerializeField] private GameObject _drawerGameObject = default;
     private Drawer _drawer;
     private HttpListener _listener;
+    private string _payloadProxy;
 
-    private event EventHandler<NewPayloadEventArgs> NewPayload;
+    public event EventHandler<NewPayloadEventArgs> NewPayload;
+
+    public class NewPayloadEventArgs : EventArgs
+    {
+        public Payload Payload { get; set; }
+    }
 
     private void Start()
     {
         _drawer = _drawerGameObject.GetComponent<Drawer>();
-        NewPayload += HandlePayload;
 
         if (!HttpListener.IsSupported)
         {
@@ -49,12 +54,7 @@ public class Listener : MonoBehaviour
 
     private void ProcessRequest(HttpListenerContext context)
     {
-        string body = new StreamReader(context.Request.InputStream).ReadToEnd();
-
-        NewPayload?.Invoke(this, new NewPayloadEventArgs
-        {
-            Body = body,
-        });
+        _payloadProxy = new StreamReader(context.Request.InputStream).ReadToEnd();
 
         byte[] b = Encoding.UTF8.GetBytes("OK");
         context.Response.StatusCode = 200;
@@ -66,23 +66,19 @@ public class Listener : MonoBehaviour
         context.Response.Close();
     }
 
-    private void HandlePayload(object _, NewPayloadEventArgs e)
+    private void Update()
     {
-        Payload p = JsonConvert.DeserializeObject<Payload>(e.Body);
-        Debug.Log("Payload: " + e.Body);
-
-        try
+        if (_payloadProxy == null)
         {
-            _drawer.NewPayload(p);
+            return;
         }
-        catch (Exception ex)
-        {
-            Debug.Log("NewPayload Got Exception: " + ex.Message);
-        }
-    }
 
-    private class NewPayloadEventArgs : EventArgs
-    {
-        public string Body { get; set; }
+        Payload p = JsonConvert.DeserializeObject<Payload>(_payloadProxy);
+        _payloadProxy = null;
+
+        NewPayload?.Invoke(this, new NewPayloadEventArgs
+        {
+            Payload = p,
+        });
     }
 }

@@ -9,24 +9,31 @@ public class Drawer : MonoBehaviour
     [SerializeField] private GameObject _playerGameObject = default;
     [SerializeField] private GameObject _mapGameObject = default;
 
+    private Listener _listener;
     private string _currentMap;
 
-    public void NewPayload(Payload payload)
+    private void Start()
     {
-        /*
+        _listener = GameObject.Find("Listener").GetComponent<Listener>();
+        _listener.NewPayload += HandlePayload;
+    }
+
+    private void HandlePayload(object _, Listener.NewPayloadEventArgs e)
+    {
+        Debug.Log("Payload: " + e.Payload);
+
         foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
         {
             Destroy(p);
         }
-        */
 
-        if (_currentMap != payload.map.name)
+        if (_currentMap != e.Payload.map.name)
         {
-            Debug.Log("New map! " + payload.map.name);
-            _currentMap = payload.map.name;
+            Debug.Log("New map! " + e.Payload.map.name);
+            _currentMap = e.Payload.map.name;
         }
 
-        DrawPlayer(payload.player, true);
+        DrawPlayer(e.Payload.player, true);
     }
 
     private void DrawPlayer(Player p, bool isMain = false)
