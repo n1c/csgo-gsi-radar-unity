@@ -10,7 +10,6 @@ using UnityEngine;
 
 public class Listener : MonoBehaviour
 {
-    [SerializeField] private GameObject _drawerGameObject = default;
     private Drawer _drawer;
     private HttpListener _listener;
     private string _payloadProxy;
@@ -24,7 +23,7 @@ public class Listener : MonoBehaviour
 
     private void Start()
     {
-        _drawer = _drawerGameObject.GetComponent<Drawer>();
+        _drawer = gameObject.GetComponent<Drawer>();
 
         if (!HttpListener.IsSupported)
         {

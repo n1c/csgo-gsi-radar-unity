@@ -15,7 +15,7 @@ public class Drawer : MonoBehaviour
 
     private void Start()
     {
-        _listener = GameObject.Find("Listener").GetComponent<Listener>();
+        _listener = gameObject.GetComponent<Listener>();
         _listener.NewPayload += HandlePayload;
     }
 
@@ -34,42 +34,29 @@ public class Drawer : MonoBehaviour
             _currentMap = e.Payload.map.name;
             _mapDimensions = new Libs.MapDimensions(_currentMap);
 
-            Texture2D mapTexture = Resources.Load<Texture2D>("csgo-overviews/overviews/" + _currentMap);
-            if (mapTexture == null)
-            {
-                Debug.Log("Failed to find Map texture for " + _currentMap);
-            }
-            else
-            {
-                _mapGameObject.GetComponent<MeshRenderer>().material.mainTexture = mapTexture;
-            }
+            Sprite mapSprite = Resources.Load<Sprite>("csgo-overviews/overviews/" + _currentMap);
+            _mapGameObject.GetComponent<SpriteRenderer>().sprite = mapSprite;
         }
 
         // DrawPlayer(e.Payload.player, true);
-        foreach (KeyValuePair<string, Player> kv in e.Payload.allplayers)
+        foreach (KeyValuePair<string, PayloadModels.Player> kv in e.Payload.allplayers)
         {
             // Only draw the allplayers on the _same team_ as player.
             if (kv.Value.team == e.Payload.player.team)
             {
-                DrawPlayer(kv.Value, kv.Key == e.Payload.player.steamid);
+                DrawPlayer(_mapDimensions, kv.Value, kv.Key == e.Payload.player.steamid);
             }
         }
     }
 
-    private void DrawPlayer(Player p, bool isMain = false)
+    private void DrawPlayer(MapDimensions mapDimensions, PayloadModels.Player p, bool isMain = false)
     {
         if (p.position == null)
         {
             return;
         }
 
-        Vector3 playerPosition = Helpers.String2Vector(p.position);
-        playerPosition = _mapDimensions.ScaleVector(playerPosition);
-        Instantiate(_playerGameObject, playerPosition, Quaternion.identity);
-
-        if (isMain)
-        {
-            // @TODO: Draw FOV?
-        }
+        GameObject _newPlayer = Instantiate(_playerGameObject);
+        _newPlayer.GetComponent<Player>().SetData(mapDimensions, p, isMain);
     }
 }
