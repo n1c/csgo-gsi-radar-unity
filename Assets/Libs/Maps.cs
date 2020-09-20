@@ -6,7 +6,8 @@ namespace Libs
 {
     public class MapDimensions
     {
-        public MapsData.Dimension _dims;
+        private const float OVERVIEW_SIZE = 1024f;
+        public Rect _dims;
 
         public MapDimensions(string map)
         {
@@ -18,11 +19,28 @@ namespace Libs
             _dims = MapsData.Dimensions[map];
         }
 
+        private float ConvertX(float x)
+        {
+            float offset = -_dims.xMin;
+            float lengthX = offset + _dims.xMax;
+            float result = (x + offset) / lengthX;
+            result *= OVERVIEW_SIZE;
+            return result;
+        }
+
+        private float ConvertY(float y)
+        {
+            float offset = -_dims.yMin;
+            float length_y = offset + _dims.yMax;
+            float result = (y + offset) / length_y;
+            return OVERVIEW_SIZE - result * OVERVIEW_SIZE;
+        }
+
         public Vector3 ScaleVector(Vector3 incoming)
         {
             return new Vector3(
-                (float)(_dims.Y - incoming.y) / _dims.Scale,
-                (float)(incoming.x - _dims.X) / _dims.Scale,
+                ConvertX(incoming.x),
+                ConvertY(incoming.y),
                 incoming.z
             );
         }
@@ -30,15 +48,9 @@ namespace Libs
 
     public class MapsData
     {
-        public struct Dimension
+        public static Dictionary<string, Rect> Dimensions = new Dictionary<string, Rect>()
         {
-            public float X;
-            public float Y;
-            public float Scale;
-        }
-
-        public static Dictionary<string, Dimension> Dimensions = new Dictionary<string, Dimension>()
-        {
+            /*
             { "de_dust2", new Dimension {
                 X = -2476,
                 Y = 3239,
@@ -49,11 +61,9 @@ namespace Libs
                 Y = 3870,
                 Scale = 4.9f,
             } },
-            { "de_mirage", new Dimension {
-                X = -3230,
-                Y = 1713,
-                Scale = 5f,
-            } },
+            */
+			{ "de_mirage", Rect.MinMaxRect(-3217, -3401, 1912, 1682) },
+            /*
             { "de_nuke", new Dimension {
                 X = -3453,
                 Y = 2887,
@@ -69,6 +79,7 @@ namespace Libs
                 Y = 1762,
                 Scale = 4.0f,
             } },
+            */
         };
     }
 }
