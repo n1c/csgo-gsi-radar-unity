@@ -2,6 +2,7 @@
 using PayloadModels;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Drawer : MonoBehaviour
@@ -31,14 +32,13 @@ public class Drawer : MonoBehaviour
         if (_currentMap != e.Payload.map.name)
         {
             Debug.Log("New map! " + e.Payload.map.name);
-            _currentMap = e.Payload.map.name;
+            _currentMap = Path.GetFileName(e.Payload.map.name);
             _mapDimensions = new Libs.MapDimensions(_currentMap);
 
             Sprite mapSprite = Resources.Load<Sprite>("overviews/" + _currentMap);
             _mapGameObject.GetComponent<SpriteRenderer>().sprite = mapSprite;
         }
 
-        // DrawPlayer(e.Payload.player, true);
         foreach (KeyValuePair<string, PayloadModels.Player> kv in e.Payload.allplayers)
         {
             // Only draw the allplayers on the _same team_ as player.

@@ -23,8 +23,7 @@ namespace Libs
                 );
             }
 
-            // Note: swapped y&z for Source -> Unity
-            return new Vector3(floats[0], floats[2], floats[1]);
+            return new Vector3(floats[0], floats[1], floats[2]);
         }
     }
 }
