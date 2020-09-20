@@ -59,6 +59,11 @@ namespace Libs
                 Y = 2887,
                 Scale = 7f,
             } },
+            { "de_overpass", new Dimension {
+                X = -4831,
+                Y = 1781,
+                Scale = 5.2f,
+            } },
             { "de_train", new Dimension {
                 X = -2477,
                 Y = 2392,

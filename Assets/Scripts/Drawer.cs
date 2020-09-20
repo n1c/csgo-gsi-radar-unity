@@ -34,7 +34,7 @@ public class Drawer : MonoBehaviour
             _currentMap = e.Payload.map.name;
             _mapDimensions = new Libs.MapDimensions(_currentMap);
 
-            Sprite mapSprite = Resources.Load<Sprite>("csgo-overviews/overviews/" + _currentMap);
+            Sprite mapSprite = Resources.Load<Sprite>("overviews/" + _currentMap);
             _mapGameObject.GetComponent<SpriteRenderer>().sprite = mapSprite;
         }
 
