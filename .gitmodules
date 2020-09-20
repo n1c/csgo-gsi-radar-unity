@@ -1,5 +1,0 @@
-[submodule "Assets/csgo-overviews"]
-	path = Assets/Resources/csgo-overviews
-	url = git@github.com:zoidbergwill/csgo-overviews.git
-	ignore = untracked
-
