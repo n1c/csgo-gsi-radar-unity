@@ -6,11 +6,18 @@ namespace PayloadModels
     [Serializable]
     public struct Payload
     {
+        public Auth auth;
         public Map map;
         public Player player;
         public Dictionary<string, Player> allplayers;
         public Dictionary<string, Grenade> grenades;
         public Bomb bomb;
+    }
+
+    [Serializable]
+    public struct Auth
+    {
+        public string app;
     }
 
     [Serializable]
@@ -27,6 +34,7 @@ namespace PayloadModels
         public string team;
         public string position;
         public string forward;
+        public string activity;
     }
 
     [Serializable]

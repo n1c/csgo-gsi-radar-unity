@@ -22,21 +22,28 @@ public class Drawer : MonoBehaviour
 
     private void HandlePayload(object _, Listener.NewPayloadEventArgs e)
     {
-        Debug.Log("Payload: " + e.Payload);
-
         foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
         {
             Destroy(p);
         }
 
+        if (e.Payload.player.activity == "menu")
+        {
+            return;
+        }
+
         if (_currentMap != e.Payload.map.name)
         {
-            Debug.Log("New map! " + e.Payload.map.name);
             _currentMap = Path.GetFileName(e.Payload.map.name);
             _mapDimensions = new Libs.MapDimensions(_currentMap);
 
             Sprite mapSprite = Resources.Load<Sprite>("overviews/" + _currentMap);
             _mapGameObject.GetComponent<SpriteRenderer>().sprite = mapSprite;
+        }
+
+        if (e.Payload.allplayers == null)
+        {
+            return;
         }
 
         foreach (KeyValuePair<string, PayloadModels.Player> kv in e.Payload.allplayers)
@@ -49,7 +56,7 @@ public class Drawer : MonoBehaviour
         }
     }
 
-    private void DrawPlayer(MapDimensions mapDimensions, PayloadModels.Player p, bool isMain = false)
+    private void DrawPlayer(MapDimensions mapDimensions, PayloadModels.Player p, bool isMain)
     {
         if (p.position == null)
         {

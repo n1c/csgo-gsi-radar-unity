@@ -9,20 +9,18 @@ public class Player : MonoBehaviour
     [SerializeField] private Sprite _tTexture = default;
     [SerializeField] private GameObject _isMain = default;
 
-    private void Start()
-    {
-        _isMain.SetActive(false);
-    }
-
-    public void SetData(MapDimensions mapDimensions, PayloadModels.Player p, bool isMain = false)
+    public void SetData(MapDimensions mapDimensions, PayloadModels.Player p, bool isMain)
     {
         Vector3 position = Helpers.String2Vector(p.position);
         Vector3 rotation = Helpers.String2Vector(p.forward);
+
         position = mapDimensions.ScaleVector(position);
+        rotation = Helpers.Forward2Rotation(rotation);
 
         // @TODO: Before we figure out Nuke etc, just set z to 0
         position.z = 0;
 
+        // @TODO: Check health and draw as dead if required?
         gameObject.GetComponent<SpriteRenderer>().sprite = Sprite(p);
         gameObject.transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
 

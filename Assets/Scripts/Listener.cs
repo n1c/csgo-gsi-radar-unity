@@ -73,6 +73,8 @@ public class Listener : MonoBehaviour
             return;
         }
 
+        // Debug.Log("Listener got payload: " + _payloadProxy);
+
         Payload p = JsonConvert.DeserializeObject<Payload>(_payloadProxy);
         _payloadProxy = null;
 

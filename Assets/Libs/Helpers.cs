@@ -25,5 +25,11 @@ namespace Libs
 
             return new Vector3(floats[0], floats[1], floats[2]);
         }
+
+        public static Vector3 Forward2Rotation(Vector3 forward)
+        {
+            float r = 90 + (forward.z * 360);
+            return new Vector3(0, 0, r);
+        }
     }
 }
