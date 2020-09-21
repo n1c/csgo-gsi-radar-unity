@@ -5,8 +5,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] Sprite _ctTexture = default;
-    [SerializeField] Sprite _tTexture = default;
+    [SerializeField] private Sprite _ctTexture = default;
+    [SerializeField] private Sprite _tTexture = default;
+    [SerializeField] private GameObject _isMain = default;
+
+    private void Start()
+    {
+        _isMain.SetActive(false);
+    }
 
     public void SetData(MapDimensions mapDimensions, PayloadModels.Player p, bool isMain = false)
     {
@@ -22,7 +28,7 @@ public class Player : MonoBehaviour
 
         if (isMain)
         {
-            // @TODO: Draw the view indicator things.
+            _isMain.SetActive(true);
         }
     }
 

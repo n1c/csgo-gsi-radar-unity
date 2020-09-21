@@ -20,11 +20,13 @@ namespace Libs
 
         public Vector3 ScaleVector(Vector3 incoming)
         {
-            return new Vector3(
+            Vector3 resized = new Vector3(
                 (float)(_dims.Y - incoming.y) / _dims.Scale,
                 (float)(incoming.x - _dims.X) / _dims.Scale,
                 incoming.z
             );
+
+            return Quaternion.Euler(0, 0, -90) * resized;
         }
     }
 
