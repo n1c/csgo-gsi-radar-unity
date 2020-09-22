@@ -12,7 +12,7 @@ public class Drawer : MonoBehaviour
 
     private Listener _listener;
     private string _currentMap;
-    private Libs.MapDimensions _mapDimensions;
+    private Dictionary<string, GameObject> _players = new Dictionary<string, GameObject>();
 
     private void Start()
     {
@@ -22,11 +22,6 @@ public class Drawer : MonoBehaviour
 
     private void HandlePayload(object _, Listener.NewPayloadEventArgs e)
     {
-        foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
-        {
-            Destroy(p);
-        }
-
         if (e.Payload.player.activity == "menu")
         {
             return;
@@ -34,11 +29,14 @@ public class Drawer : MonoBehaviour
 
         if (_currentMap != e.Payload.map.name)
         {
-            _currentMap = Path.GetFileName(e.Payload.map.name);
-            _mapDimensions = new Libs.MapDimensions(_currentMap);
+            _currentMap = e.Payload.map.name;
+            _mapGameObject.GetComponent<CurrentMap>().Changed(e.Payload.map.name);
 
-            Sprite mapSprite = Resources.Load<Sprite>("overviews/" + _currentMap);
-            _mapGameObject.GetComponent<SpriteRenderer>().sprite = mapSprite;
+            _players = new Dictionary<string, GameObject>();
+            foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                Destroy(p);
+            }
         }
 
         if (e.Payload.allplayers == null)
@@ -48,22 +46,29 @@ public class Drawer : MonoBehaviour
 
         foreach (KeyValuePair<string, PayloadModels.Player> kv in e.Payload.allplayers)
         {
+            PayloadModels.Player LoopPlayer = kv.Value;
+            PayloadModels.Player MainPlayer = e.Payload.player;
+            string LoopPlayerSteamID = kv.Key;
+            bool SameTeam = LoopPlayer.team == MainPlayer.team;
+
             // Only draw the allplayers on the _same team_ as player.
-            if (kv.Value.team == e.Payload.player.team)
+            // If we have a loop player, that is not on the spec player's team
+            if (_players.ContainsKey(LoopPlayerSteamID) && !SameTeam)
             {
-                DrawPlayer(_mapDimensions, kv.Value, kv.Key == e.Payload.player.steamid);
+                // @TODO: Display a death icon?
+                Destroy(_players[LoopPlayerSteamID]);
+                _ = _players.Remove(LoopPlayerSteamID);
+            }
+
+            if (!_players.ContainsKey(LoopPlayerSteamID) && SameTeam)
+            {
+                _players[LoopPlayerSteamID] = Instantiate(_playerGameObject);
+            }
+
+            if (_players.ContainsKey(LoopPlayerSteamID))
+            {
+                _players[LoopPlayerSteamID].GetComponent<Player>().SetData(LoopPlayer, LoopPlayerSteamID == MainPlayer.steamid);
             }
         }
-    }
-
-    private void DrawPlayer(MapDimensions mapDimensions, PayloadModels.Player p, bool isMain)
-    {
-        if (p.position == null)
-        {
-            return;
-        }
-
-        GameObject _newPlayer = Instantiate(_playerGameObject);
-        _newPlayer.GetComponent<Player>().SetData(mapDimensions, p, isMain);
     }
 }
