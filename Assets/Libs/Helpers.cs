@@ -26,13 +26,9 @@ namespace Libs
             return new Vector3(floats[0], floats[1], floats[2]);
         }
 
-        // https://github.com/lexogrine/hud-manager/blob/4a2906b34e5a4bea3ac65ee408124e9ca549650d/boltobserv/modules/gsi.js#L75
         public static Quaternion Forward2Rotation(Vector3 forward)
         {
-            float angle = forward.x > 0
-                ? 90 + (forward.y * -1 * 90)
-                : 270 + (forward.y * 90)
-                ;
+            float angle = Mathf.Atan2(forward.x, forward.y) * Mathf.Rad2Deg *-1;
 
             return Quaternion.Euler(0, 0, angle);
         }
